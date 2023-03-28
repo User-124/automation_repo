@@ -1,0 +1,36 @@
+---
+- name: Configure R2 and R3 with OSPF routing
+  hosts: r2,r3
+  gather_facts: no
+  vars:
+    ospf_network: "10.0.23.0/24"
+    ospf_area: "0"
+  tasks:
+    - name: Configure hostname
+      ios_hostname:
+        name: "{{ inventory_hostname }}"
+      register: hostname
+
+    - name: Configure interfaces
+      ios_interface:
+        name: "{{ item }}"
+        state: present
+        description: "Connected to R{{ inventory_hostname[-1] }}"
+        ip_address: "{{ hostvars[inventory_hostname]['ip'] }}"
+        netmask: "{{ hostvars[inventory_hostname]['netmask'] }}"
+      loop:
+        - GigabitEthernet0/0
+        - GigabitEthernet0/1
+
+    - name: Configure OSPF
+      ios_ospf:
+        state: present
+        router_id: "{{ hostvars[inventory_hostname]['router_id'] }}"
+        network:
+          - area: "{{ ospf_area }}"
+            prefix: "{{ ospf_network }}"
+      register: ospf
+
+    - name: Print configuration
+      debug:
+        var: ospf.changed
