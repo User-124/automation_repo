@@ -1,0 +1,35 @@
+all:
+  children:
+    g10:
+      children:
+        enterprise1:
+          hosts:
+            192.168.1.[1:3]:
+          children:
+            edge1:
+              hosts:
+                192.168.1.3: 
+            internal1: 
+              hosts: 
+                192.168.1.[1:2]:
+        isp:
+          hosts:
+            192.168.1.[4:6]:
+        enterprise2:
+          hosts:
+            192.168.1.[7:9]:
+          children: 
+            edge2: 
+              hosts: 
+                192.168.1.8: 
+            internal2: 
+              hosts: 
+                192.168.1.7: 
+                192.168.1.9:         
+      vars: 
+        ansible_connection: network_cli
+        ansible_network_os: ios
+        ansible_user: g10
+        ansible_password: g10@cisco
+        ansible_become: yes
+        ansible_become_method: enable
