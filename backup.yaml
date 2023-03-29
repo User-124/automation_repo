@@ -1,0 +1,13 @@
+- name: Backup Previous Configuration
+  hosts: g10
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Commit Backup
+      delegate_to: 127.0.0.1
+      shell: |
+        cd ../../backup
+        git init
+        git add -A
+        git commit -m "backup@`TZ="America/Toronto" date +"%Y-%m-%d %H:%M:%S %Z"`"
+        exit 0
