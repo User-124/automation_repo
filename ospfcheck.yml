@@ -1,0 +1,48 @@
+- name: Configure OSPF routing between R1 and R2
+  hosts: R1
+  gather_facts: no
+  tasks:
+    - name: Configure interface GigabitEthernet0/0/0
+      ios_config:
+        lines:
+          - "interface GigabitEthernet0/0/0"
+          - "ip address 192.168.1.1 255.255.255.0"
+          - "no shutdown"
+        parents: "interface GigabitEthernet0/0/0"
+      register: result
+
+    - name: Configure OSPF process 1
+      ios_config:
+        lines:
+          - "router ospf 1"
+          - "network 192.168.1.0 0.0.0.255 area 0"
+      register: result
+
+- name: Configure OSPF routing between R1 and R2
+  hosts: R2
+  gather_facts: no
+  tasks:
+    - name: Configure interface GigabitEthernet0/0/0
+      ios_config:
+        lines:
+          - "interface GigabitEthernet0/0/0"
+          - "ip address 192.168.1.2 255.255.255.0"
+          - "no shutdown"
+        parents: "interface GigabitEthernet0/0/0"
+      register: result
+
+    - name: Configure interface GigabitEthernet0/0/1
+      ios_config:
+        lines:
+          - "interface GigabitEthernet0/0/1"
+          - "ip address 192.168.2.1 255.255.255.252"
+          - "no shutdown"
+        parents: "interface GigabitEthernet0/0/1"
+      register: result
+
+    - name: Configure OSPF process 1
+      ios_config:
+        lines:
+          - "router ospf 1"
+          - "network 192.168.2.0 0.0.0.3 area 0"
+      register: result
