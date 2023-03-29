@@ -1,0 +1,46 @@
+---
+- name: Configure EIGRP routing between R2 and R3
+  hosts: R2
+  gather_facts: no
+  tasks:
+  - name: Configure interface on R2
+    ios_config:
+      lines:
+        - interface GigabitEthernet0/1
+        - ip address 192.168.4.1 255.255.255.252
+        - no shutdown
+      parents: interface GigabitEthernet0/1
+    register: config_output
+
+  - name: Configure EIGRP on R2
+    ios_config:
+      lines:
+        - router eigrp 1
+        - network 192.168.4.0 0.0.0.3
+        - no auto-summary
+        - passive-interface GigabitEthernet0/0
+      parents: router eigrp 1
+    register: config_output
+
+- name: Configure EIGRP routing between R2 and R3
+  hosts: R3
+  gather_facts: no
+  tasks:
+  - name: Configure interface on R3
+    ios_config:
+      lines:
+        - interface GigabitEthernet0/1
+        - ip address 192.168.4.2 255.255.255.252
+        - no shutdown
+      parents: interface GigabitEthernet0/1
+    register: config_output
+
+  - name: Configure EIGRP on R3
+    ios_config:
+      lines:
+        - router eigrp 1
+        - network 192.168.4.0 0.0.0.3
+        - no auto-summary
+        - passive-interface GigabitEthernet0/0
+      parents: router eigrp 1
+    register: config_output
